@@ -1,65 +1,60 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Layout from '../views/layout/Layout'
+import Login from '@/views/login/Login'
+import Home from '@/components/Home'
+import Chat from '@/components/chat/Chat'
+// import EmpAdv from '@/components/emp/EmpAdv'
+// import EmpBasic from '@/components/emp/EmpBasic'
+// import PerEc from '@/components/personnel/PerEc'
+// import PerEmp from '@/components/personnel/PerEmp'
+// import PerMv from '@/components/personnel/PerMv'
+// import PerSalary from '@/components/personnel/PerSalary'
+// import PerTrain from '@/components/personnel/PerTrain'
+// import SalMonth from '@/components/salary/SalMonth'
+// import SalSearch from '@/components/salary/SalSearch'
+// import SalSob from '@/components/salary/SalSob'
+// import SalSobCfg from '@/components/salary/SalSobCfg'
+// import SalTable from '@/components/salary/SalTable'
+// import StaAll from '@/components/statistics/StaAll'
+// import StaPers from '@/components/statistics/StaPers'
+// import StaRecord from '@/components/statistics/StaRecord'
+// import StaScore from '@/components/statistics/StaScore'
+// import SysBasic from '@/components/system/SysBasic'
+// import SysCfg from '@/components/system/SysCfg'
+// import SysData from '@/components/system/SysData'
+// import SysHr from '@/components/system/SysHr'
+// import SysInit from '@/components/system/SysInit'
+// import SysLog from '@/components/system/SysLog'
 
 Vue.use(Router)
 
-const _import = require('./_import_' + process.env.NODE_ENV)
-Vue.use(Router)
-export const constantRouterMap = [
-  {path: '/login', component: _import('login/index'), hidden: true},
-  {path: '/404', component: _import('404'), hidden: true},
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    name: '首页',
-    hidden: true,
-    children: [{
-      path: 'dashboard', component: _import('dashboard/index')
-    }]
-  }
-]
 export default new Router({
-  // mode: 'history', //后端支持可开
-  scrollBehavior: () => ({y: 0}),
-  routes: constantRouterMap
+  routes: [
+    {
+      path: '/',
+      name: 'Login',
+      component: Login,
+      hidden: true
+    }, {
+      path: '/home',
+      name: '主页',
+      component: Home,
+      hidden: true,
+      meta: {
+        requireAuth: true
+      },
+      children: [
+        {
+          path: '/chat',
+          name: '消息',
+          component: Chat,
+          hidden: true,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        }
+      ]
+    }
+  ]
 })
-export const asyncRouterMap = [
-  {
-    path: '/system',
-    component: Layout,
-    redirect: '/system/article',
-    name: '功能模块',
-    meta: {title: '功能模块', icon: 'tree'},
-    children: [
-      {
-        path: 'article',
-        name: '文章',
-        component: _import('article/article'),
-        meta: {title: '文章', icon: 'example'},
-        menu: 'article'
-      },
-    ]
-  },
-  {
-    path: '/user',
-    component: Layout,
-    redirect: '/user/',
-    name: '',
-    meta: {title: '用户权限', icon: 'table'},
-    children: [
-      {
-        path: '', name: '用户列表', component: _import('user/user'), meta: {title: '用户列表', icon: 'user'}, menu: 'user'
-      },
-      {
-        path: 'role',
-        name: '权限管理',
-        component: _import('user/role'),
-        meta: {title: '权限管理', icon: 'password'},
-        menu: 'role'
-      },
-    ]
-  },
-  {path: '*', redirect: '/404', hidden: true}
-]

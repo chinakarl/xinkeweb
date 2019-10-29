@@ -1,27 +1,56 @@
 'use strict'
-// Template version: 1.3.1
+// Template version: 1.2.7
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
 
 module.exports = {
   dev: {
-    env: require('./dev.env'),      // 使用 config/dev.env.js 中定义的编译环境
-    host: 'localhost',              // 运行测试页面的host
-    port: 9520,                     // 运行测试页面的端口
-    autoOpenBrowser: true,
-    autoOpenPage: '/login', 
-    assetsSubDirectory: 'static',   // 编译输出的二级目录
-    assetsPublicPath: '/',          // 编译发布的根目录，可配置为资源服务器域名或 CDN 域名
-    proxyTable: {                   // 需要 proxyTable 代理的接口（可跨域）请求接口地址
-      '/api': {
-        target: 'http://localhost:8080',
+
+    // Paths
+    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',
+    proxyTable: {
+      '/': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
         pathRewrite: {
-          '^/api': '/'
+          '^/': ''
         }
+      },
+      '/ws/*': {
+        target: 'ws://127.0.0.1:8082',
+        ws: true
       }
     },
-    cssSourceMap: false            // 是否开启 cssSourceMap
+
+    // Various Dev Server settings
+    host: 'localhost', // can be overwritten by process.env.HOST
+    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    autoOpenBrowser: false,
+    errorOverlay: true,
+    notifyOnErrors: true,
+    poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
+
+
+    /**
+     * Source Maps
+     */
+
+    // https://webpack.js.org/configuration/devtool/#development
+    devtool: 'eval-source-map',
+
+    // If you have problems debugging vue-files in devtools,
+    // set this to false - it *may* help
+    // https://vue-loader.vuejs.org/en/options.html#cachebusting
+    cacheBusting: true,
+
+    // CSS Sourcemaps off by default because relative paths are "buggy"
+    // with this option, according to the CSS-Loader README
+    // (https://github.com/webpack/css-loader#sourcemaps)
+    // In our experience, they generally work as expected,
+    // just be aware of this issue when enabling this option.
+    cssSourceMap: false,
   },
 
   build: {

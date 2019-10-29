@@ -1,60 +1,90 @@
 import axios from 'axios'
-import {Message, MessageBox} from 'element-ui'
-import {getToken} from '@/utils/auth'
-import store from '../store'
-// 创建axios实例
-const service = axios.create({
-  baseURL: process.env.BASE_URL, // api的base_url
-  timeout: 15000                  // 请求超时时间2
+import {Message} from 'element-ui'
+axios.interceptors.request.use(config => {
+  return config;
+}, err => {
+  Message.error({message: '请求超时!'});
+  // return Promise.resolve(err);
 })
-// request拦截器
-service.interceptors.request.use(config => {
-  return config
-}, error => {
-  // Do something with request error
-  console.error(error) // for debug
-  Promise.reject(error)
-})
-// respone拦截器
-service.interceptors.response.use(
-  response => {
-    const res = response.data;
-    if (res.returnCode == '1000') {
-      return res;
-    }
-    if (res.returnCode == '100') {
-      return res.returnData;
-    } else if (res.returnCode == "20011") {
-      Message({
-        showClose: true,
-        message: res.returnMsg,
-        type: 'error',
-        duration: 500,
-        onClose: () => {
-          store.dispatch('FedLogOut').then(() => {
-            location.reload()// 为了重新实例化vue-router对象 避免bug
-          })
-        }
-      });
-      return Promise.reject("未登录")
-    } else {
-      Message({
-        message: res.returnMsg,
-        type: 'error',
-        duration: 3 * 1000
-      })
-      return Promise.reject(res)
-    }
-  },
-  error => {
-    console.error('err' + error)// for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 3 * 1000
-    })
-    return Promise.reject(error)
+axios.interceptors.response.use(data => {
+  if (data.status && data.status == 200 && data.data.status == 500) {
+    Message.error({message: data.data.msg});
+    return;
   }
-)
-export default service
-
+  if (data.data.msg) {
+    Message.success({message: data.data.msg});
+  }
+  return data;
+}, err => {
+  if (err.response.status == 504 || err.response.status == 404) {
+    Message.error({message: '服务器被吃了⊙﹏⊙∥'});
+  } else if (err.response.status == 403) {
+    Message.error({message: '权限不足,请联系管理员!'});
+  } else if (err.response.status == 401) {
+    Message.error({message: err.response.data.msg});
+  } else {
+    if (err.response.data.msg) {
+      Message.error({message: err.response.data.msg});
+    }else{
+      Message.error({message: '未知错误!'});
+    }
+  }
+  // return Promise.resolve(err);
+})
+let base = '';
+export const postRequest = (url, params) => {
+  return axios({
+    method: 'post',
+    url: `${base}${url}`,
+    data: params,
+    transformRequest: [function (data) {
+      let ret = ''
+      for (let it in data) {
+        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+      }
+      return ret
+    }],
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+}
+export const uploadFileRequest = (url, params) => {
+  return axios({
+    method: 'post',
+    url: `${base}${url}`,
+    data: params,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+}
+export const putRequest = (url, params) => {
+  return axios({
+    method: 'put',
+    url: `${base}${url}`,
+    data: params,
+    transformRequest: [function (data) {
+      let ret = ''
+      for (let it in data) {
+        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+      }
+      return ret
+    }],
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+}
+export const deleteRequest = (url) => {
+  return axios({
+    method: 'delete',
+    url: `${base}${url}`
+  });
+}
+export const getRequest = (url) => {
+  return axios({
+    method: 'get',
+    url: `${base}${url}`
+  });
+}
