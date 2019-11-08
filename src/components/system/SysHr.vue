@@ -6,7 +6,7 @@
         prefix-icon="el-icon-search"
         size="small"
         style="width: 400px;margin-right: 10px"
-        v-model="keywords">
+        v-model="name">
       </el-input>
       <el-button size="small" type="primary" icon="el-icon-search" @click="searchClick">搜索</el-button>
     </div>
@@ -84,7 +84,7 @@
   export default{
     data(){
       return {
-        keywords: '',
+        name: '',
         fullloading: false,
         hrs: [],
         cardLoading: [],
@@ -184,12 +184,12 @@
         this.fullloading = true;
         var _this = this;
         var searchWords;
-        if (this.keywords === '') {
-          searchWords = 'all';
-        } else {
-          searchWords = this.keywords;
-        }
-        this.getRequest("/system/hr/" + searchWords).then(resp=> {
+        
+        let param = {
+          name: this.name
+        };
+
+        this.postRequest("/user/list",param).then(resp=> {
           if (resp && resp.status == 200) {
             _this.hrs = resp.data;
             var length = resp.data.length;

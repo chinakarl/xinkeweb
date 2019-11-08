@@ -41,6 +41,7 @@ export const formatRoutes = (routes)=> {
     let fmRouter = {
       path: path,
       component(resolve){
+        console.log(resolve);
         if (component.startsWith("Home")) {
           require(['../components/' + component + '.vue'], resolve)
         } else if (component.startsWith("Emp")) {
@@ -53,6 +54,10 @@ export const formatRoutes = (routes)=> {
           require(['../components/statistics/' + component + '.vue'], resolve)
         } else if (component.startsWith("Sys")) {
           require(['../components/system/' + component + '.vue'], resolve)
+        }
+        else{
+          console.log(path);
+          require(['../views' + path + '.vue'], resolve)
         }
       },
       name: name,

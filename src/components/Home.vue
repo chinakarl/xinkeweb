@@ -44,14 +44,20 @@
           </div>
         </el-aside>
           <el-main>
+            <!-- <el-tabs v-model="editableTabsValue2" type="card" closable @tab-remove="removeTab">
+                <el-tab-pane  :label="this.$router.currentRoute.name" :name="this.$router.currentRoute.name">
+                   <sys-user></sys-user>
+                </el-tab-pane>
+             </el-tabs> -->
             <el-breadcrumb separator-class="el-icon-arrow-right">
               <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item v-text="this.$router.currentRoute.name"></el-breadcrumb-item>
+              
             </el-breadcrumb>
-            <keep-alive>
+              <keep-alive>
               <router-view v-if="this.$route.meta.keepAlive"></router-view>
             </keep-alive>
-            <router-view v-if="!this.$route.meta.keepAlive"></router-view>
+            <router-view style="margin-top:50px;" v-if="!this.$route.meta.keepAlive"></router-view>
           </el-main>
       </el-container>
     </el-container>

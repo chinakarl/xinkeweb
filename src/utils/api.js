@@ -88,3 +88,19 @@ export const getRequest = (url) => {
     url: `${base}${url}`
   });
 }
+
+export const get =(url,params)=>{
+  
+  return axios({
+    method:'get',
+    url:`${base}${url}`,
+    data: params,
+    timeout:5000000,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Access-Control-Allow-Origin': '*',
+    }
+  })
+
+}
